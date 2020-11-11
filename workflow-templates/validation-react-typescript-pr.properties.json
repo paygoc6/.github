@@ -1,0 +1,13 @@
+{
+    "name": "Validation React Typescript PR",
+    "description": "Realiza a validação do pull request, utilizando Jest, Eslint e tsc.",
+    "iconName": "logo-paygo",
+    "categories": [
+        "Typescript",
+        "React",
+        "Validation"
+    ],
+    "filePatterns": [
+        "package.json$"
+    ]
+}
