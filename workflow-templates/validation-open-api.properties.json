@@ -1,0 +1,14 @@
+{
+    "name": "OpenAPI validation and sync by label",
+    "description": "Realiza a validação do arquivo OpenAPI/swagger com o linter da PayGo e abre um pull request para o repositório",
+    "iconName": "logo-paygo",
+    "categories": [
+        "OpenAPI",
+        "Docker",
+        "web-api",
+        "Validation"
+    ],
+    "filePatterns": [
+        "bin/swagger"
+    ]
+}
