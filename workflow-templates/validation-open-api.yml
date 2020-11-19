@@ -85,11 +85,11 @@ jobs:
         run: |
           mv target/swagger/swagger.json ./${GITHUB_REPOSITORY##*/}.json
           echo ::set-output name=file-name::./${GITHUB_REPOSITORY##*/}.json
-          echo ::set-output name=branch-name::${GITHUB_REPOSITORY##*/}${GITHUB_SHA::7}
+          echo ::set-output name=branch-name::${GITHUB_REPOSITORY##*/}-${GITHUB_SHA::7}
           echo ::set-output name=folder-name::swaggers/${GITHUB_REPOSITORY##*/}
 
       - name: Create pull request
-        uses: paygoc6/action-pull-request-another-repo@v1.0.1
+        uses: paygoc6/action-pull-request-another-repo@v1.0.2
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
