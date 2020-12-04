@@ -1,13 +1,9 @@
 name: OpenAPI validation and web-api sync by label
 
-# THERE ARE INFORMATION TO BE FILLED IN THIS WORKFLOW
-# PLEASE, GO TO JOB push-openapi AND FILL user_email AND user_name
-# WITH INFORMATION ABOUT YOUR SQUAD.
+# DOCUMENTATION ABOUT THIS WORKFLOW IS AVAILABLE AT:
+# https://github.com/paygoc6/web-api/wiki/Workflow-template-OpenAPI-validation-and-sync-by-label
 
-# YOUR PROJECT MUST CONFORM TO JOB generate-openapi IN ORDER
-# TO RUN THE WHOLE WORKFLOW.
-
-# INFORMATION ABOUT THE ACTIONS EXECUTED IN THIS WORKFLOW CAN BE FOUND AT:
+# ACTIONS EXECUTED IN THIS WORKFLOW CAN BE FOUND AT:
 # https://github.com/paygoc6/action-openapi-linter
 # https://github.com/paygoc6/action-pull-request-another-repo
 
