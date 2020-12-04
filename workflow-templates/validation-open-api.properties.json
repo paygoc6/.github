@@ -1,6 +1,6 @@
 {
     "name": "OpenAPI validation and sync by label",
-    "description": "Realiza a validação do arquivo OpenAPI/swagger com o linter da PayGo e abre um pull request para o repositório",
+    "description": "Realiza a validação do arquivo OpenAPI/swagger com o linter da PayGo e abre um pull request para o repositório web-api. Documentação: https://github.com/paygoc6/web-api/wiki/Workflow-template-OpenAPI-validation-and-sync-by-label",
     "iconName": "logo-paygo",
     "categories": [
         "OpenAPI",
@@ -9,6 +9,7 @@
         "Validation"
     ],
     "filePatterns": [
-        "bin/swagger"
+        "bin/swagger",
+        "swagger"
     ]
 }
