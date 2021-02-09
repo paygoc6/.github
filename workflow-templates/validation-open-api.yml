@@ -7,15 +7,21 @@ name: OpenAPI validation and web-api sync by label
 # https://github.com/paygoc6/action-openapi-linter
 # https://github.com/paygoc6/action-pull-request-another-repo
 
+
 on:
+  push:
+    branches:
+      - main
+      - master
   pull_request:
-    types: [ labeled ]
+    branches:
+      - main
+      - master
 
 jobs:
   generate-openapi:
     name: Generate OpenAPI file
     runs-on: paygo-clojure
-    if: contains(github.event.pull_request.labels.*.name, 'swagger') || contains(github.event.pull_request.labels.*.name, 'openapi')
 
     steps:
       - name: Checkout repository
@@ -68,6 +74,7 @@ jobs:
     name: OpenAPI document push
     runs-on: paygo-clojure
     needs: validate-openapi
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
 
     steps:
       - name: Download OpenAPI file
