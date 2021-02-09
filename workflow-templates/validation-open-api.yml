@@ -1,7 +1,7 @@
-name: OpenAPI validation and web-api sync by label
+name: OpenAPI validation and web-api sync
 
 # DOCUMENTATION ABOUT THIS WORKFLOW IS AVAILABLE AT:
-# https://github.com/paygoc6/web-api/wiki/Workflow-template-OpenAPI-validation-and-sync-by-label
+# https://github.com/paygoc6/web-api/wiki/Workflow-template-OpenAPI-validation-and-sync
 
 # ACTIONS EXECUTED IN THIS WORKFLOW CAN BE FOUND AT:
 # https://github.com/paygoc6/action-openapi-linter
