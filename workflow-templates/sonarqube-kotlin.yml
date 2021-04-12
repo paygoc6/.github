@@ -11,8 +11,8 @@ jobs:
       - name: SonarQube Scan
         uses: vtex/action-sonarqube@main
         with:
-          projectKey: ${GITHUB_REPOSITORY##*/}
-          projectName: ${GITHUB_REPOSITORY##*/}
+          projectKey: ${{ github.event.repository.name }}
+          projectName: ${{ github.event.repository.name }}
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           host: ${{ secrets.SONARQUBE_HOST }}
           token: ${{ secrets.SONARQUBE_TOKEN }}
