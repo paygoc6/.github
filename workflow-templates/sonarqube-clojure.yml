@@ -1,0 +1,25 @@
+on:
+ pull_request:
+   branches:
+     - main
+     - master
+
+jobs:
+
+  SonarQube:
+    runs-on: paygo-clojure
+
+    steps:
+      - name: Setup sonarqube
+        uses: warchant/setup-sonar-scanner@master
+      - name: 'Checkout repository on branch: ${{ github.REF }}'
+        uses: actions/checkout@v2
+      - name: Run sonarqube
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: sonar-scanner
+          -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+          -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
+          -Dsonar.projectKey=${GITHUB_REPOSITORY##*/}
+          -Dsonar.language=clojure
+          -Dsonar.scm.provider=git
