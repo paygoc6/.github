@@ -1,0 +1,18 @@
+name: SonarQube Integration
+on:
+  push:
+    branch: [dev]
+jobs:
+  sonarQubeTrigger:
+    name: SonarQube Trigger
+    runs-on: paygo-runner-linux
+    steps:
+      - uses: actions/checkout@v2
+      - name: SonarQube Scan
+        uses: vtex/action-sonarqube@main
+        with:
+          projectKey: ${GITHUB_REPOSITORY##*/}
+          projectName: ${GITHUB_REPOSITORY##*/}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          host: ${{ secrets.SONARQUBE_HOST }}
+          token: ${{ secrets.SONARQUBE_TOKEN }}
