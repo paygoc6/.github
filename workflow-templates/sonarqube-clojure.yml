@@ -20,6 +20,6 @@ jobs:
         run: sonar-scanner
           -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
           -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
-          -Dsonar.projectKey=baas-middleware-connector
+          -Dsonar.projectKey=${GITHUB_REPOSITORY##*/}
           -Dsonar.language=clojure
           -Dsonar.scm.provider=git
