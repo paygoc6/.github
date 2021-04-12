@@ -22,6 +22,6 @@ jobs:
         run: sonar-scanner
           -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
           -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
-          -Dsonar.projectKey=${GITHUB_REPOSITORY##*/}
+          -Dsonar.projectKey=${{ github.event.repository.name }}
           -Dsonar.language=clojure
           -Dsonar.scm.provider=git
