@@ -1,0 +1,30 @@
+name: SonarQube DotNet Core Analyses
+
+on:
+ pull_request:
+   branches:
+     - main
+     - master
+jobs:
+  SonarQube:
+    runs-on: paygo-runner-linux
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Tests
+        run: |
+          dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=coverage /p:Exclude=[xunit.*]*
+      - name: Sonar
+        run: |
+          export PATH="$PATH:~/.dotnet/tools"
+          dotnet tool install --global dotnet-sonarscanner --version 5.1.0 && \
+          dotnet sonarscanner begin /k:${{ github.event.repository.name }}
+          /d:sonar.host.url=${{ secrets.SONARQUBE_HOST }} 
+          /d:sonar.login=${{ secrets.SONARQUBE_TOKEN }}
+          /d:sonar.cs.opencover.reportsPaths=$PWD\**\**\*.opencover.xml && \
+          dotnet build <project_name>.sln && \
+          dotnet sonarscanner end /d:sonar.login=${{ secrets.SONARQUBE_TOKEN }}

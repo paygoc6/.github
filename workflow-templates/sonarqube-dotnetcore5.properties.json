@@ -1,0 +1,11 @@
+{
+    "name": "SonarQube analyse for DotNet Core 5.0.x projects",
+    "description": "Realiza a validação do pull request seguindo as diretivas setadas no SonarQube",
+    "iconName": "logo-paygo",
+    "categories": [
+        "SonarQube",
+        "QA",
+        "DotNetCore",
+        "Validation"
+    ]
+}
