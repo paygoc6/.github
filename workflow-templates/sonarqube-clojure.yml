@@ -23,5 +23,6 @@ jobs:
           -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
           -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
           -Dsonar.projectKey=${{ github.event.repository.name }}
-          -Dsonar.language=clojure
+          -Dsonar.sources=.
           -Dsonar.scm.provider=git
+          -Dsonar.clojure.kondo.enabled=true
