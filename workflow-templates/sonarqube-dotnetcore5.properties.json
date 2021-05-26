@@ -4,7 +4,6 @@
     "iconName": "logo-paygo",
     "categories": [
         "SonarQube",
-        "QA",
         "DotNetCore",
         "Validation"
     ]
