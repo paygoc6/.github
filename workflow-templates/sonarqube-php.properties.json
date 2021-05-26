@@ -1,0 +1,11 @@
+{
+    "name": "SonarQube analyse for PHP projects",
+    "description": "Realiza a validação do pull request seguindo as diretivas setadas no SonarQube",
+    "iconName": "logo-paygo",
+    "categories": [
+        "SonarQube",
+        "QA",
+        "PHP",
+        "Validation"
+    ]
+}
