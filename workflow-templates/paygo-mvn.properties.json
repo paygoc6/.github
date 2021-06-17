@@ -1,0 +1,11 @@
+{
+    "name": "Maven workflow for bucket paygo-mvn",
+    "description": "Maven workflow for bucket paygo-mvn, using shared setting.xml",
+    "iconName": "logo-paygo",
+    "categories": [
+        "Maven",
+        "Tests",
+        "SonarQube",
+        "Docker"
+    ]
+}

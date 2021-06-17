@@ -2,7 +2,9 @@ name: Building Project
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: 
+      - master
+      - develop
 
 jobs:
   notify-start:
@@ -24,6 +26,9 @@ jobs:
     needs: [notify-start]
     runs-on: paygo-maven
     name: Building
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 8
@@ -45,27 +50,18 @@ jobs:
         
     - name: ECR Login
       run: aws ecr get-login --region us-east-1 --no-include-email | sh -
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       
     - name: Testing
       run: mvn clean test
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       
     - name: Building and Pushing to ECR
       run: mvn -DskipTests clean install
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    
   ########################## NOTIFICATIONS OF ENDING ################################
 
   notify-end:
     runs-on: paygo-yarn
     needs: [notify-start, build]
-    if: always()
     name: Ending Notification
     steps:
       - name: "Slack Notification start of CI on #${{ secrets.SLACK_CHANNEL }}"
