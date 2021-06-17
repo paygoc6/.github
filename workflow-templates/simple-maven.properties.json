@@ -3,9 +3,9 @@
     "description": "Simple maven workflow with sonarqube analisys, tests, build and docker build.",
     "iconName": "logo-paygo",
     "categories": [
-        "SonarQube",
         "Maven",
         "Tests",
+        "SonarQube",
         "Docker"
     ]
 }
