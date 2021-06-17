@@ -1,0 +1,93 @@
+name: Building Project
+
+on:
+  push:
+    branches: [ master, develop ]
+
+jobs:
+  notify-start:
+    runs-on: paygo-yarn
+    name: Start Notification
+    steps:
+      - name: "Slack Notification start of CI on #${{ secrets.SLACK_CHANNEL }}"
+        uses: rtCamp/action-slack-notify@v2.1.0
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+          SLACK_COLOR: '#59656f'
+          SLACK_TITLE: New Release of ${{ github.event.repository.name }}
+          SLACK_ICON: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+          SLACK_USERNAME: Github Actions
+          SLACK_MESSAGE: 'Iniciando CI :construction:'
+          
+  build:
+    needs: [notify-start]
+    runs-on: paygo-maven
+    name: Building
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 8
+      uses: actions/setup-java@v2
+      with:
+        java-version: '8'
+        distribution: 'adopt'
+        
+    - name: Cache local Maven repository
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+        
+    - name: Sonarqube
+      run: mvn clean package sonar:sonar -DprojectName=${{ github.event.repository.name }} -Dsonar.projectKey=br.com.paygo.${{ github.event.repository.name }} -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+        
+    - name: ECR Login
+      run: aws ecr get-login --region us-east-1 --no-include-email | sh -
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      
+    - name: Testing
+      run: mvn clean test
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      
+    - name: Building and Pushing to ECR
+      run: mvn -DskipTests clean install
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  ########################## NOTIFICATIONS OF ENDING ################################
+
+  notify-end:
+    runs-on: paygo-yarn
+    needs: [notify-start, build]
+    if: always()
+    name: Ending Notification
+    steps:
+      - name: "Slack Notification start of CI on #${{ secrets.SLACK_CHANNEL }}"
+        uses: rtCamp/action-slack-notify@v2.1.1
+        if: needs.build.result == 'success'
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+          SLACK_COLOR: 'good'
+          SLACK_TITLE: New Release of ${{ github.event.repository.name }}
+          SLACK_ICON: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+          SLACK_USERNAME: Github Actions
+          SLACK_MESSAGE: "CI concluído, pronto para deploy :rocket:"
+
+      - name: "Slack Notification start of CI on #${{ secrets.SLACK_CHANNEL }}"
+        uses: rtCamp/action-slack-notify@v2.1.0
+        if: needs.build.result != 'success'
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+          SLACK_COLOR: 'danger'
+          SLACK_TITLE: New Release of ${{ github.event.repository.name }}
+          SLACK_ICON: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+          SLACK_USERNAME: Github Actions
+          SLACK_MESSAGE: 'Ocorreu um erro no CI :rotating_light:'
