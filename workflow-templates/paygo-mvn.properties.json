@@ -4,8 +4,6 @@
     "iconName": "logo-paygo",
     "categories": [
         "Maven",
-        "Tests",
-        "SonarQube",
         "Docker"
     ]
 }
