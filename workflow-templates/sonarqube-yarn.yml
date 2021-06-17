@@ -1,0 +1,56 @@
+name: Validation Sonarqube Yarn
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sonarqube:
+    name: SonarQube Analysis
+    runs-on: paygo-yarn
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Setup yarn cache
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules-sonarqube-${{ github.event.repository.name }}
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Run coverage
+        env: 
+          CI: true
+        run: yarn run test --watchAll false --runInBand --coverage
+
+      - name: SonarCloud Scan
+        if: ${{ always() }}
+        uses: SonarSource/sonarcloud-github-action@v1.6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+        with:
+          args: >
+            -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
+            -Dsonar.projectKey=${{ github.event.repository.name }}
+            -Dsonar.projectName=${{ github.event.repository.name }}
+            -Dsonar.scm.provider=git
+            -Dsonar.sources=src,public
+            -Dsonar.sonar.tests=src
+            -Dsonar.coverage.exclusions=src/**/*.test.ts,src/**/*.test.tsx,src/**/*.test.js,src/**/*.test.jsx,src/**/__mocks__*
+            -Dsonar.test.inclusions=src/**/*.test.ts,src/**/*.test.tsx,src/**/*.test.js,src/**/*.test.jsx,src/**/__mocks__*
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info

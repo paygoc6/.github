@@ -1,0 +1,14 @@
+{
+    "name": "SonarQube analyse for yarn projects",
+    "description": "Realiza a validação do código final do projeto seguindo as diretivas setadas no SonarQube",
+    "iconName": "logo-paygo",
+    "categories": [
+        "Typescript",
+        "Yarn",
+        "Validation",
+        "SonarQube"
+    ],
+    "filePatterns": [
+        "yarn.lock$"
+    ]
+}
