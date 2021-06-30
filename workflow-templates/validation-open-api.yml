@@ -92,7 +92,7 @@ jobs:
           echo ::set-output name=folder-name::swaggers/${GITHUB_REPOSITORY##*/}
 
       - name: Create pull request
-        uses: paygoc6/action-pull-request-another-repo@v1.0.2
+        uses: paygoc6/action-pull-request-another-repo@v1.0.3
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
