@@ -1,0 +1,15 @@
+{
+    "name": "OpenAPI validation and sync by label - Baas Middleware",
+    "description": "Realiza a validação do arquivo OpenAPI/swagger com o linter da PayGo e abre um pull request para o repositório baas-middleware-connector. Documentação: https://github.com/paygoc6/baas-middleware-connector/wiki/Workflow-template-OpenAPI-validation-and-sync",
+    "iconName": "logo-paygo",
+    "categories": [
+        "OpenAPI",
+        "Docker",
+        "baas-middleware-connector",
+        "Validation"
+    ],
+    "filePatterns": [
+        "bin/swagger",
+        "swagger"
+    ]
+}

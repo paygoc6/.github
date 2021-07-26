@@ -1,0 +1,95 @@
+name: OpenAPI validation and baas-middleware sync by label
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  generate-openapi:
+    name: Generate OpenAPI file
+    runs-on: paygo-clojure
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Generate OpenAPI file
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: sh bin/swagger
+
+      - name: Save OpenAPI file
+        uses: actions/upload-artifact@v2
+        with:
+          name: openapi
+          path: target/swagger/swagger.json
+          retention-days: 1
+
+  validate-openapi:
+    name: Validate OpenAPI file
+    runs-on: paygo-clojure
+    needs: generate-openapi
+
+    steps:
+      - name: Download OpenAPI file
+        uses: actions/download-artifact@v2
+        with:
+          name: openapi
+          path: target/swagger
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Run linter
+        uses: paygoc6/action-openapi-linter@v1
+        with:
+          registry: ${{ steps.login_ecr.outputs.registry }}
+
+  push-openapi:
+    name: OpenAPI document push
+    runs-on: paygo-clojure
+    needs: validate-openapi
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Download OpenAPI file
+        uses: actions/download-artifact@v2
+        with:
+          name: openapi
+          path: target/swagger
+
+      - name: Change OpenAPI file name
+        id: file
+        run: |
+          mv target/swagger/swagger.json ./${GITHUB_REPOSITORY##*/}.json
+          echo ::set-output name=file-name::./${GITHUB_REPOSITORY##*/}.json
+          echo ::set-output name=branch-name::WIP ${GITHUB_REPOSITORY##*/}-${GITHUB_SHA::7}
+          echo ::set-output name=folder-name::resources/swaggers/${GITHUB_REPOSITORY##*/}
+      - name: Create pull request
+        uses: paygoc6/action-pull-request-another-repo@v1.0.3
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source_folder: ${{ steps.file.outputs.file-name }}
+          destination_repo: 'paygoc6/baas-middleware-connector'
+          destination_folder: ${{ steps.file.outputs.folder-name }}
+          destination_base_branch: 'develop'
+          destination_head_branch: ${{ steps.file.outputs.branch-name }}
+          user_email: "baas@paygo.com.br"
+          user_name: "bank-as-a-service"
+          pull_request_reviewers: 'paygoc6/bank-as-a-service'
